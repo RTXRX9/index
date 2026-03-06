@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MODO X ADAPTED — Desktop Launcher</title>
+<meta name="description" content="A precision-engineered desktop environment. Built for those who refuse default settings. Adapt. Override. Execute."/>
+<meta name="keywords" content="modo x adapted, desktop launcher, custom launcher, windows launcher, desktop client"/>
+<meta name="author" content="MODO X ADAPTED"/>
+<meta property="og:title" content="MODO X ADAPTED — Desktop Launcher"/>
+<meta property="og:description" content="A precision-engineered desktop environment. Built for those who refuse default settings."/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://modoxadapted.netlify.app"/>
+<meta property="og:image" content="https://modoxadapted.netlify.app/favicon.svg"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="MODO X ADAPTED — Desktop Launcher"/>
+<meta name="twitter:description" content="A precision-engineered desktop environment. Built for those who refuse default settings."/>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--orange:#FF6200;--orange2:#ff8c00;--bg:#050505;--text:#e8e2d8;--muted:#5a5550;--line:rgba(255,98,0,0.12);--glow:0 0 40px rgba(255,98,0,0.4);}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;overflow-x:hidden;cursor:none}
+#cur{position:fixed;width:10px;height:10px;background:var(--orange);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--orange);transition:width .15s,height .15s}
+#cur-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(255,98,0,0.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .15s,height .15s,border-color .15s}
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(255,98,0,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,98,0,0.025) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+.vignette{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,0.92) 100%);pointer-events:none;z-index:1}
+.scanlines{position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 3px);pointer-events:none;z-index:2}
+canvas#ptc{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0.45}
+.wheel-wrap{position:fixed;right:-80px;top:50%;transform:translateY(-50%);width:700px;height:700px;pointer-events:none;z-index:1}
+.wheel-svg{width:100%;height:100%;animation:spin 22s linear infinite;opacity:0.1;filter:drop-shadow(0 0 28px rgba(255,98,0,0.45))}
+@keyframes spin{to{transform:rotate(360deg)}}
+nav.topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(5,5,5,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;letter-spacing:4px;text-decoration:none;color:var(--text)}
+.nav-logo span{color:var(--orange)}
+.nav-logo .lx{color:var(--muted);margin:0 5px}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:1px;background:var(--orange);transform:scaleX(0);transition:transform .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-dl{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:#000;background:var(--orange);border:none;padding:9px 20px;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);cursor:none;transition:background .2s,box-shadow .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.nav-dl:hover{background:var(--orange2);box-shadow:var(--glow)}
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:0 48px;z-index:10;padding-top:58px}
+.hero-inner{max-width:620px}
+.hero-tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:22px;animation:fadeUp .6s .1s both}
+.tline{width:22px;height:1px;background:var(--orange)}
+.ttxt{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--orange)}
+.hero-title{font-family:'Orbitron',sans-serif;font-weight:900;line-height:1;margin-bottom:22px;animation:fadeUp .6s .2s both}
+.ht1{display:block;font-size:clamp(42px,6vw,80px);color:var(--text);letter-spacing:2px}
+.ht2{display:block;font-size:clamp(42px,6vw,80px);color:var(--orange);letter-spacing:2px;position:relative}
+.ht2::before,.ht2::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%}
+.ht2::before{color:#ff003c;clip-path:polygon(0 20%,100% 20%,100% 40%,0 40%);animation:g1 5s infinite;opacity:.7}
+.ht2::after{color:#00cfff;clip-path:polygon(0 55%,100% 55%,100% 72%,0 72%);animation:g2 5s infinite;opacity:.5}
+@keyframes g1{0%,90%,100%{transform:translateX(0);opacity:0}92%{transform:translateX(-4px);opacity:.7}94%{transform:translateX(4px);opacity:.7}96%{transform:translateX(0);opacity:0}}
+@keyframes g2{0%,88%,100%{transform:translateX(0);opacity:0}90%{transform:translateX(3px);opacity:.5}93%{transform:translateX(-3px);opacity:.5}95%{transform:translateX(0);opacity:0}}
+.ht3{display:block;font-size:clamp(11px,1.2vw,14px);color:var(--muted);letter-spacing:8px;font-weight:400;margin-top:8px}
+.divrow{display:flex;align-items:center;gap:12px;margin-bottom:20px;animation:fadeUp .6s .3s both}
+.dline{flex:1;height:1px;background:var(--line)}
+.ddia{width:6px;height:6px;background:var(--orange);transform:rotate(45deg);flex-shrink:0}
+.hero-desc{font-size:14px;line-height:1.9;color:var(--muted);margin-bottom:22px;font-weight:300;animation:fadeUp .6s .35s both}
+.hero-meta{display:flex;margin-bottom:28px;animation:fadeUp .6s .4s both}
+.hms{flex:1;padding:10px 14px;border:1px solid var(--line);border-right:none}
+.hms:last-child{border-right:1px solid var(--line)}
+.hms:first-child{border-left:2px solid var(--orange)}
+.hmk{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.hmv{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--text);letter-spacing:1px}
+.hmv.grn{color:#22c55e}
+.hero-acts{display:flex;align-items:center;gap:14px;animation:fadeUp .6s .45s both}
+.btn-main{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#000;background:var(--orange);border:none;padding:15px 36px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);cursor:none;position:relative;overflow:hidden;transition:box-shadow .3s;text-decoration:none;display:inline-flex;align-items:center;gap:10px}
+.btn-main::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);transform:translateX(-100%);transition:transform .4s}
+.btn-main:hover{box-shadow:var(--glow)}
+.btn-main:hover::before{transform:translateX(100%)}
+.btn-ghost{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--line);padding:14px 22px;cursor:none;transition:color .2s,border-color .2s;text-decoration:none}
+.btn-ghost:hover{color:var(--text);border-color:rgba(255,98,0,0.4)}
+.hero-note{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;color:var(--muted);margin-top:14px;animation:fadeUp .6s .5s both}
+.hero-note span{color:var(--orange)}
+section{position:relative;z-index:10;padding:100px 48px}
+.sec-tag{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:clamp(22px,3vw,36px);font-weight:900;color:var(--text);letter-spacing:2px;margin-bottom:12px}
+.sec-sub{font-size:13px;color:var(--muted);line-height:1.8;max-width:500px;font-weight:300}
+.sec-divider{width:100%;height:1px;background:var(--line);margin:0 0 60px}
+#features{background:rgba(5,5,5,0.6)}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:52px}
+.feat{background:var(--bg);padding:28px 24px;transition:background .2s}
+.feat:hover{background:rgba(255,98,0,0.03)}
+.feat-icon{font-size:22px;margin-bottom:14px;display:block}
+.feat-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:8px}
+.feat-desc{font-size:12px;color:var(--muted);line-height:1.7}
+.feat-tag{display:inline-block;margin-top:10px;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;padding:3px 8px;border-radius:2px}
+.ft-live{background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
+.ft-beta{background:rgba(255,98,0,0.12);color:var(--orange);border:1px solid rgba(255,98,0,0.25)}
+.ft-soon{background:rgba(90,85,80,0.2);color:var(--muted);border:1px solid rgba(90,85,80,0.3)}
+#install{border-top:1px solid var(--line)}
+.install-wrap{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;margin-top:52px}
+.install-steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:20px;padding:20px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:none}
+.step-num{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:rgba(255,98,0,0.2);letter-spacing:2px;flex-shrink:0;width:48px}
+.step-title{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:5px}
+.step-desc{font-size:12px;color:var(--muted);line-height:1.7}
+.step-code{font-family:'Orbitron',sans-serif;font-size:10px;background:rgba(255,98,0,0.06);border:1px solid var(--line);padding:8px 12px;margin-top:8px;color:var(--orange);letter-spacing:1px}
+.install-card{border:1px solid var(--line);background:rgba(255,98,0,0.015);padding:32px;position:relative}
+.install-card::before{content:'';position:absolute;top:-1px;left:-1px;width:24px;height:24px;border-top:2px solid var(--orange);border-left:2px solid var(--orange)}
+.install-card::after{content:'';position:absolute;bottom:-1px;right:-1px;width:24px;height:24px;border-bottom:2px solid var(--orange);border-right:2px solid var(--orange)}
+.ic-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.ic-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:var(--text)}
+.ic-badge{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;padding:4px 9px;border-radius:2px;background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
+.ic-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}
+.ic-row:last-of-type{border-bottom:none}
+.ic-label{color:var(--muted);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px}
+.ic-val{color:var(--text);font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700}
+.ic-val.grn{color:#22c55e}
+.dl-btn-wrap{margin-top:24px}
+.dl-btn{display:block;width:100%;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#000;background:var(--orange);border:none;padding:16px;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);cursor:none;position:relative;overflow:hidden;transition:box-shadow .3s;text-align:center;text-decoration:none}
+.dl-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);transform:translateX(-100%);transition:transform .4s}
+.dl-btn:hover{box-shadow:var(--glow)}
+.dl-btn:hover::before{transform:translateX(100%)}
+.dl-note{font-size:11px;color:var(--muted);text-align:center;margin-top:10px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px}
+#changelog{border-top:1px solid var(--line)}
+.changelog-wrap{margin-top:52px;display:flex;flex-direction:column;gap:8px}
+.cl-card{border:1px solid var(--line);background:rgba(255,98,0,0.012);overflow:hidden}
+.cl-head{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:none}
+.cl-head:hover{background:rgba(255,98,0,0.03)}
+.cl-ver{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--text);letter-spacing:1px}
+.cl-date{font-family:'Barlow Condensed',sans-serif;font-size:11px;color:var(--muted);margin-top:2px}
+.cl-tag{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;padding:3px 7px;border-radius:2px}
+.ct-s{background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
+.ct-b{background:rgba(255,98,0,0.12);color:var(--orange);border:1px solid rgba(255,98,0,0.25)}
+.cl-chev{margin-left:auto;color:var(--muted);font-size:10px;transition:transform .2s}
+.cl-card.open .cl-chev{transform:rotate(90deg)}
+.cl-body{display:none;padding:0 18px 18px;border-top:1px solid var(--line)}
+.cl-card.open .cl-body{display:block}
+.cl-section{font-family:'Barlow Condensed',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+.cl-item{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:rgba(232,226,216,0.75);line-height:1.5;margin-bottom:4px}
+.cl-dot{width:4px;height:4px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.cd-a{background:#22c55e}
+.cd-f{background:var(--orange)}
+.cd-c{background:#00cfff}
+footer{position:relative;z-index:10;border-top:1px solid var(--line);padding:40px 48px;display:flex;align-items:center;justify-content:space-between}
+.ft-logo{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;letter-spacing:4px;color:var(--muted)}
+.ft-logo span{color:var(--orange)}
+.ft-copy{font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;color:var(--muted)}
+.ft-links{display:flex;gap:18px}
+.ft-links a{color:var(--muted);transition:color .2s}
+.ft-links a:hover{color:var(--orange)}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pfill{0%{width:0%}100%{width:60%}}
+@media(max-width:768px){nav.topbar{padding:0 20px}.hero{padding:80px 20px 60px}section{padding:70px 20px}.install-wrap{grid-template-columns:1fr}footer{flex-direction:column;gap:16px;text-align:center;padding:32px 20px}.nav-links{display:none}}
+</style>
+</head>
+<body>
+<!-- CURSOR -->
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- BG -->
+<div class="bg-grid"></div>
+<div class="vignette"></div>
+<canvas id="ptc"></canvas>
+<div class="scanlines"></div>
+
+<!-- WHEEL -->
+<div class="wheel-wrap">
+<svg class="wheel-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<radialGradient id="sG" cx="35%" cy="28%" r="65%"><stop offset="0%" stop-color="#d4d4d4"/><stop offset="45%" stop-color="#888"/><stop offset="100%" stop-color="#151515"/></radialGradient>
+<radialGradient id="hG" cx="35%" cy="28%" r="65%"><stop offset="0%" stop-color="#b8b8b8"/><stop offset="50%" stop-color="#606060"/><stop offset="100%" stop-color="#0e0e0e"/></radialGradient>
+<radialGradient id="rG" cx="50%" cy="25%" r="65%"><stop offset="0%" stop-color="#a8a8a8"/><stop offset="55%" stop-color="#404040"/><stop offset="100%" stop-color="#080808"/></radialGradient>
+</defs>
+<circle cx="100" cy="100" r="46" fill="none" stroke="url(#rG)" stroke-width="7.5"/>
+<g stroke="#707070" stroke-width="3.5" stroke-linecap="round">
+<line x1="100" y1="54" x2="100" y2="146"/>
+<line x1="54" y1="100" x2="146" y2="100"/>
+<line x1="67" y1="67" x2="133" y2="133"/>
+<line x1="133" y1="67" x2="67" y2="133"/>
+</g>
+<circle cx="100" cy="100" r="22" fill="none" stroke="#505050" stroke-width="2"/>
+<circle cx="100" cy="100" r="11" fill="url(#hG)" stroke="#383838" stroke-width="1.5"/>
+<circle cx="100" cy="44" r="10.5" fill="url(#sG)" stroke="#1e1e1e" stroke-width="1.2"/>
+<circle cx="100" cy="156" r="10.5" fill="url(#sG)" stroke="#1e1e1e" stroke-width="1.2"/>
+<circle cx="44" cy="100" r="10.5" fill="url(#sG)" stroke="#1e1e1e" stroke-width="1.2"/>
+<circle cx="156" cy="100" r="10.5" fill="url(#sG)" stroke="#1e1e1e" stroke-width="1.2"/>
+<circle cx="56" cy="56" r="9.5" fill="url(#sG)" stroke="#1e1e1e" stroke-width="1.2"/>
+<circle cx="144" cy="56" r="9.5" fill="url(#sG)" stroke="#1e1e1e" stroke-width="1.2"/>
+<circle cx="56" cy="144" r="9.5" fill="url(#sG)" stroke="#1e1e1e" stroke-width="1.2"/>
+<circle cx="144" cy="144" r="9.5" fill="url(#sG)" stroke="#1e1e1e" stroke-width="1.2"/>
+</svg>
+</div>
+
+<!-- NAV -->
+<nav class="topbar">
+<a class="nav-logo" href="#">MODO<span class="lx">×</span><span>ADAPTED</span></a>
+<div class="nav-links">
+<a href="#features">Features</a>
+<a href="#install">Install</a>
+<a href="#changelog">Changelog</a>
+</div>
+<a class="nav-dl" href="#install">▶ Download</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="hero-inner">
+<div class="hero-tag"><div class="tline"></div><span class="ttxt">Version 1.0.1 · Stable</span></div>
+<h1 class="hero-title"><span class="ht1">MODO X</span><span class="ht2" data-text="ADAPTED">ADAPTED</span><span class="ht3">DESKTOP CLIENT</span></h1>
+<div class="divrow"><div class="dline"></div><div class="ddia"></div><div class="dline"></div></div>
+<p class="hero-desc">A precision-engineered desktop environment.<br>Built for those who refuse default settings.<br>Adapt. Override. Execute.</p>
+<div class="hero-meta">
+<div class="hms"><div class="hmk">Version</div><div class="hmv">1.0.1</div></div>
+<div class="hms"><div class="hmk">Platform</div><div class="hmv">WIN 10/11</div></div>
+<div class="hms"><div class="hmk">Status</div><div class="hmv grn">● Live</div></div>
+<div class="hms"><div class="hmk">Build</div><div class="hmv">STABLE</div></div>
+</div>
+<div class="hero-acts">
+<a class="btn-main" href="#install">▶ Get Launcher</a>
+<a class="btn-ghost" href="#changelog">Changelog</a>
+</div>
+<p class="hero-note">Free download · Windows 10/11 · <span>v1.0.1</span></p>
+</div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+<div class="sec-tag"><div class="tline"></div><span class="ttxt">What's Inside</span></div>
+<h2 class="sec-title reveal">FEATURES</h2>
+<p class="sec-sub reveal">Everything built into the launcher — no bloat, no defaults.</p>
+<div class="sec-divider"></div>
+<div class="features-grid reveal">
+<div class="feat"><span class="feat-icon">◈</span><div class="feat-title">Custom Theming</div><div class="feat-desc">Accent color picker, toggleable visual effects — wheel, particles, scanlines. Your setup, your rules.</div><span class="feat-tag ft-live">LIVE</span></div>
+<div class="feat"><span class="feat-icon">⬡</span><div class="feat-title">Particle System</div><div class="feat-desc">Live ambient particle field with connecting lines. Runs at full FPS with minimal CPU overhead.</div><span class="feat-tag ft-live">LIVE</span></div>
+<div class="feat"><span class="feat-icon">◎</span><div class="feat-title">System Stats</div><div class="feat-desc">Real-time CPU, RAM, DISK and FPS monitoring displayed directly in the launcher bar.</div><span class="feat-tag ft-live">LIVE</span></div>
+<div class="feat"><span class="feat-icon">⟳</span><div class="feat-title">Auto Updates</div><div class="feat-desc">Built-in update checker with stable, beta and nightly channels. Know exactly what version you're running.</div><span class="feat-tag ft-live">LIVE</span></div>
+<div class="feat"><span class="feat-icon">⌖</span><div class="feat-title">Persistent Settings</div><div class="feat-desc">Every preference saved locally. Nothing resets on close — accent color, path, toggles, language, all of it.</div><span class="feat-tag ft-live">LIVE</span></div>
+<div class="feat"><span class="feat-icon">◑</span><div class="feat-title">Multi-Language</div><div class="feat-desc">Interface available in English, French, German, Spanish, Japanese and Arabic with full RTL support.</div><span class="feat-tag ft-live">LIVE</span></div>
+<div class="feat"><span class="feat-icon">▲</span><div class="feat-title">App Integration</div><div class="feat-desc">Auto-detect install path, version checking, real executable launch with admin support.</div><span class="feat-tag ft-beta">NEXT</span></div>
+<div class="feat"><span class="feat-icon">⊕</span><div class="feat-title">Auto-Updater</div><div class="feat-desc">Automatic update download and silent install. Stay current without lifting a finger.</div><span class="feat-tag ft-soon">PLANNED</span></div>
+<div class="feat"><span class="feat-icon">☰</span><div class="feat-title">User Profiles</div><div class="feat-desc">Multiple profiles with individual settings — switch between setups instantly.</div><span class="feat-tag ft-soon">PLANNED</span></div>
+</div>
+</section>
+
+<!-- INSTALL -->
+<section id="install">
+<div class="sec-tag"><div class="tline"></div><span class="ttxt">Get Started</span></div>
+<h2 class="sec-title reveal">INSTALLATION</h2>
+<p class="sec-sub reveal">Download, extract, run. No installer required.</p>
+<div class="sec-divider"></div>
+<div class="install-wrap">
+<div class="install-steps reveal">
+<div class="step"><div class="step-num">01</div><div><div class="step-title">Download the launcher</div><div class="step-desc">Click the download button and save the <code style="color:var(--orange);font-size:11px">MODO-X-ADAPTED-Setup.exe</code> file anywhere on your machine.</div></div></div>
+<div class="step"><div class="step-num">02</div><div><div class="step-title">Run the installer</div><div class="step-desc">Double-click the setup file. Windows may show a SmartScreen warning — click <em style="color:var(--text)">More info → Run anyway</em>.</div></div></div>
+<div class="step"><div class="step-num">03</div><div><div class="step-title">Set your app path</div><div class="step-desc">On first launch, go to <em style="color:var(--text)">Settings → App Path</em> and point it to your executable.<div class="step-code">C:\Games\YourApp\YourApp.exe</div></div></div>
+<div class="step"><div class="step-num">04</div><div><div class="step-title">Launch</div><div class="step-desc">Hit the orange Launch button. Customize your theme, enable particles, set your language — you're all set.</div></div></div>
+</div>
+<div class="install-card reveal">
+<div class="ic-header"><div class="ic-title">MODO X ADAPTED</div><span class="ic-badge">v1.0.1</span></div>
+<div class="ic-row"><span class="ic-label">Version</span><span class="ic-val">1.0.1 Stable</span></div>
+<div class="ic-row"><span class="ic-label">Platform</span><span class="ic-val">Windows 10 / 11</span></div>
+<div class="ic-row"><span class="ic-label">Size</span><span class="ic-val">~85 MB</span></div>
+<div class="ic-row"><span class="ic-label">Released</span><span class="ic-val">March 2026</span></div>
+<div class="ic-row"><span class="ic-label">Status</span><span class="ic-val grn">● Live</span></div>
+<div class="dl-btn-wrap"><a class="dl-btn" href="#" onclick="alert('Download link coming soon!');return false;">▶ Download Launcher</a><p class="dl-note">Free · No account required · Windows only</p></div>
+</div>
+</div>
+</section>
+
+<!-- CHANGELOG -->
+<section id="changelog">
+<div class="sec-tag"><div class="tline"></div><span class="ttxt">What Changed</span></div>
+<h2 class="sec-title reveal">CHANGELOG</h2>
+<p class="sec-sub reveal">Full patch history for the launcher.</p>
+<div class="sec-divider"></div>
+<div class="changelog-wrap reveal">
+<div class="cl-card open">
+<div class="cl-head" onclick="toggleCL(this.parentElement)"><span class="cl-tag ct-s">STABLE</span><div><div class="cl-ver">v1.0.1</div><div class="cl-date">March 5, 2026 · Current</div></div><span class="cl-chev">▶</span></div>
+<div class="cl-body">
+<div class="cl-section">Bug Fixes</div>
+<div class="cl-item"><div class="cl-dot cd-f"></div><span>Fixed launcher not detecting app path on first run</span></div>
+<div class="cl-item"><div class="cl-dot cd-f"></div><span>Resolved window controls not responding after maximize</span></div>
+<div class="cl-item"><div class="cl-dot cd-f"></div><span>Fixed system stats showing wrong RAM on Windows 11</span></div>
+<div class="cl-section">Improvements</div>
+<div class="cl-item"><div class="cl-dot cd-c"></div><span>Splash screen loads 40% faster</span></div>
+<div class="cl-item"><div class="cl-dot cd-c"></div><span>Particle system optimized — 15% less CPU</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Settings now persist across sessions via localStorage</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Multi-language support added (6 languages + RTL)</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Social links now open in system browser</span></div>
+</div>
+</div>
+<div class="cl-card">
+<div class="cl-head" onclick="toggleCL(this.parentElement)"><span class="cl-tag ct-s">STABLE</span><div><div class="cl-ver">v1.0.0</div><div class="cl-date">March 1, 2026 · Initial Release</div></div><span class="cl-chev">▶</span></div>
+<div class="cl-body">
+<div class="cl-section">New Features</div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Full launcher UI with Mahoraga wheel background</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>System stats bar — CPU, RAM, DISK, FPS, live clock</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Settings panel with 4 sections</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Particle system with connecting lines</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Audio engine — hover, click, launch, error sounds</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Download progress bar with shimmer</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Splash screen with staged loading</span></div>
+</div>
+</div>
+<div class="cl-card">
+<div class="cl-head" onclick="toggleCL(this.parentElement)"><span class="cl-tag ct-b">BETA</span><div><div class="cl-ver">v0.9.0</div><div class="cl-date">February 20, 2026</div></div><span class="cl-chev">▶</span></div>
+<div class="cl-body">
+<div class="cl-section">Beta</div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Initial launcher prototype</span></div>
+<div class="cl-item"><div class="cl-dot cd-a"></div><span>Electron build pipeline setup</span></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+<div class="ft-logo">MODO<span>×ADAPTED</span></div>
+<div class="ft-copy">© 2026 MODO X ADAPTED · All rights reserved</div>
+<div class="ft-links">
+<a href="https://discord.com/users/998553136228741200" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.32 4.37A19.8 19.8 0 0015.53 3c-.22.38-.47.9-.65 1.31a18.3 18.3 0 00-5.75 0C8.95 3.9 8.7 3.38 8.47 3a19.74 19.74 0 00-4.8 1.37C.53 9.1-.32 13.72.1 18.27a19.94 19.94 0 006.07 3.07c.49-.66.93-1.37 1.3-2.1a12.93 12.93 0 01-2.04-.99l.49-.38a14.2 14.2 0 0012.14 0l.5.38a12.9 12.9 0 01-2.05.99c.38.73.81 1.44 1.3 2.1a19.9 19.9 0 006.09-3.07c.5-5.23-.85-9.76-3.58-13.9zM8.02 15.33c-1.24 0-2.27-1.14-2.27-2.55 0-1.4.99-2.55 2.27-2.55 1.28 0 2.29 1.15 2.27 2.55 0 1.41-.99 2.55-2.27 2.55zm7.96 0c-1.24 0-2.27-1.14-2.27-2.55 0-1.4.99-2.55 2.27-2.55 1.28 0 2.29 1.15 2.27 2.55 0 1.41-.98 2.55-2.27 2.55z"/></svg></a>
+<a href="https://instagram.com" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1112.324 0 6.162 6.162 0 01-12.324 0zM12 16a4 4 0 110-8 4 4 0 010 8zm4.965-10.405a1.44 1.44 0 112.881.001 1.44 1.44 0 01-2.881-.001z"/></svg></a>
+</div>
+</footer>
+
+<script>
+// ─── CURSOR ───────────────────────────────────────────
+var cur=document.getElementById('cur');
+var curR=document.getElementById('cur-ring');
+var mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',function(e){
+mx=e.clientX;
+my=e.clientY;
+});
+(function animC(){
+cur.style.left=mx+'px';
+cur.style.top=my+'px';
+rx+=(mx-rx)*0.14;
+ry+=(my-ry)*0.14;
+curR.style.left=rx+'px';
+curR.style.top=ry+'px';
+requestAnimationFrame(animC);
+})();
+document.querySelectorAll('a,button,.cl-head,.feat').forEach(function(el){
+el.addEventListener('mouseenter',function(){
+curR.style.width='44px';
+curR.style.height='44px';
+curR.style.borderColor='rgba(255,98,0,0.8)';
+});
+el.addEventListener('mouseleave',function(){
+curR.style.width='32px';
+curR.style.height='32px';
+curR.style.borderColor='rgba(255,98,0,0.5)';
+});
+});
+
+// ─── PARTICLES ────────────────────────────────────────
+var cv=document.getElementById('ptc');
+var cx=cv.getContext('2d');
+var pts=[];
+function resizePtc(){
+cv.width=window.innerWidth;
+cv.height=window.innerHeight;
+}
+resizePtc();
+window.addEventListener('resize',resizePtc);
+for(var i=0;i<55;i++)pts.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:Math.random()*1.4+0.3,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,o:Math.random()*.5+.1});
+(function drawPtc(){
+requestAnimationFrame(drawPtc);
+cx.clearRect(0,0,cv.width,cv.height);
+pts.forEach(function(p){
+p.x+=p.vx;
+p.y+=p.vy;
+if(p.x<0)p.x=cv.width;
+if(p.x>cv.width)p.x=0;
+if(p.y<0)p.y=cv.height;
+if(p.y>cv.height)p.y=0;
+cx.beginPath();
+cx.arc(p.x,p.y,p.r,0,Math.PI*2);
+cx.fillStyle='rgba(255,98,0,'+p.o+')';
+cx.fill();
+});
+for(var i=0;i<pts.length;i++)for(var j=i+1;j<pts.length;j++){
+var d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+if(d<100){
+cx.beginPath();
+cx.moveTo(pts[i].x,pts[i].y);
+cx.lineTo(pts[j].x,pts[j].y);
+cx.strokeStyle='rgba(255,98,0,'+(0.06*(1-d/100))+')';
+cx.lineWidth=.5;
+cx.stroke();
+}
+}
+})();
+
+// ─── SCROLL REVEAL ────────────────────────────────────
+var revEls=document.querySelectorAll('.reveal');
+var obs=new IntersectionObserver(function(entries){
+entries.forEach(function(e){
+if(e.isIntersecting){
+e.target.classList.add('visible');
+}
+});
+},{threshold:0.15});
+revEls.forEach(function(el){
+obs.observe(el);
+});
+
+// ─── CHANGELOG TOGGLE ─────────────────────────────────
+function toggleCL(card){
+card.classList.toggle('open');
+}
+
+// ─── NAV ACTIVE ───────────────────────────────────────
+var sections=document.querySelectorAll('section[id]');
+window.addEventListener('scroll',function(){
+var pos=window.scrollY+100;
+sections.forEach(function(s){
+var link=document.querySelector('.nav-links a[href="#'+s.id+'"]');
+if(!link)return;
+if(s.offsetTop<=pos&&s.offsetTop+s.offsetHeight>pos){
+document.querySelectorAll('.nav-links a').forEach(function(a){
+a.style.color='';
+a.style.borderColor='';
+});
+link.style.color='var(--text)';
+}
+});
+});
+</script>
+</body>
+</html>
